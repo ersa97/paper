@@ -41,7 +41,7 @@ func Mux(paper paper.PaperService) {
 	r.HandleFunc("/transaction/new", middleware.Auth(paper.CreateTransaction)).Methods("POST")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.GetDetailTransaction)).Methods("GET")
 	r.HandleFunc("/transaction", middleware.Auth(paper.GetListTransaction)).Methods("GET")
-	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.UpdateAccount)).Methods("PUT")
+	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.UpdateTransaction)).Methods("PUT")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.DeleteTransaction)).Methods("DELETE")
 
 	r.Use(mux.CORSMethodMiddleware(r))

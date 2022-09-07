@@ -30,6 +30,10 @@ func (m *PaperService) CreateTransaction(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	userid := helpers.GetAuthorizationTokenValue(r, "userid")
+
+	body.UserId = int(userid.(float64))
+
 	result, err := models.AddTransaction(body, m.DB)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -161,7 +165,7 @@ func (m *PaperService) UpdateTransaction(w http.ResponseWriter, r *http.Request)
 	userid := helpers.GetAuthorizationTokenValue(r, "userid")
 	trx.UserId = int(userid.(float64))
 
-	result, err := models.UpdateTransaction(trx, m.DB)
+	_, err = models.UpdateTransaction(trx, m.DB)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(models.Response{
@@ -169,6 +173,16 @@ func (m *PaperService) UpdateTransaction(w http.ResponseWriter, r *http.Request)
 		})
 		return
 	}
+
+	result, err := models.GetDetailTransaction(trx.TrxId, m.DB)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.Response{
+			Message: err.Error(),
+		})
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(models.Response{
 		Message: "update transaction success",
