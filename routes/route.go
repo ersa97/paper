@@ -44,6 +44,10 @@ func Mux(paper paper.PaperService) {
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.UpdateTransaction)).Methods("PUT")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.DeleteTransaction)).Methods("DELETE")
 
+	//profile
+	r.HandleFunc("/profile", middleware.Auth(paper.GetProfile)).Methods("GET")
+	r.HandleFunc("/profile/{id}", middleware.Auth(paper.UpdateProfile)).Methods("PUT")
+
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	r.NotFoundHandler = http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {

@@ -34,6 +34,17 @@ func GetUser(param interface{}, DB *gorm.DB) (User, error) {
 	return user, nil
 }
 
+func GetProfile(param interface{}, DB *gorm.DB) (User, error) {
+
+	var user User
+
+	GetUser := DB.Debug().Where("id =? AND deleted_at is null", param).First(&user)
+	if GetUser.Error != nil {
+		return user, GetUser.Error
+	}
+	return user, nil
+}
+
 func AddUser(data User, DB *gorm.DB) (User, error) {
 
 	log.Println("create user")
@@ -60,4 +71,20 @@ func CheckUser(email string, DB *gorm.DB) (bool, error) {
 		return true, nil
 	}
 
+}
+
+func UpdateUser(data User, DB *gorm.DB) (User, error) {
+	var user User
+	resultGet := DB.Debug().Where("email=? and deleted_at is null", data.Name).Find(&user)
+	if !resultGet.RecordNotFound() {
+		return User{}, errors.New("name already in use")
+	}
+
+	data.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", time.Now().Local().Format("2006-01-02 15:04:05"))
+
+	update := DB.Debug().Where("id = ?", data.Id).Model(&user).Updates(data)
+	if update.Error != nil {
+		return User{}, errors.New("something is wrong while updating account data")
+	}
+	return data, nil
 }
