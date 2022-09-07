@@ -17,6 +17,23 @@ type Account struct {
 	DeletedAt NullTime  `json:"deleted_at" gorm:"deleted_at"`
 }
 
+type AccountMod struct {
+	Code      int       `json:"code" gorm:"code"`
+	Name      string    `json:"name" gorm:"name"`
+	CreatedAt time.Time `json:"created_at" gorm:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"updated_at"`
+}
+
+type accounts []AccountMod
+
+func (Account) TableName() string {
+	return "accounts"
+}
+
+func (AccountMod) TableName() string {
+	return "accounts"
+}
+
 func GetAccountDetail(code int, DB *gorm.DB) (Account, error) {
 
 	var account Account
@@ -32,10 +49,10 @@ func GetAccountDetail(code int, DB *gorm.DB) (Account, error) {
 }
 
 func GetAccountList(limit, page int, DB *gorm.DB) (*paginations.Paginator, error) {
-	var acc Account
+	var acc accounts
 
-	countAcc := DB.Where("deleted_at is null")
-	getAcc := DB.Where("deleted_at is null")
+	countAcc := DB.Debug().Where("deleted_at is null")
+	getAcc := DB.Debug().Where("deleted_at is null")
 	if getAcc.Error != nil {
 		return nil, getAcc.Error
 	}
@@ -67,14 +84,14 @@ func AddAccount(data Account, DB *gorm.DB) (Account, error) {
 }
 func UpdateAccount(data Account, DB *gorm.DB) (Account, error) {
 	var acc Account
-	resultGet := DB.Where("name=? and deleted_at is null", data.Name).Find(&acc)
+	resultGet := DB.Debug().Where("name=? and deleted_at is null", data.Name).Find(&acc)
 	if !resultGet.RecordNotFound() {
 		return Account{}, errors.New("name already in use")
 	}
 
-	acc.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", time.Now().Local().Format("2006-01-02 15:04:05"))
+	data.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", time.Now().Local().Format("2006-01-02 15:04:05"))
 
-	update := DB.Where("code = ?", data.Code).Update(&data)
+	update := DB.Debug().Where("code = ?", data.Code).Model(&acc).Updates(data)
 	if update.Error != nil {
 		return Account{}, errors.New("something is wrong while updating account data")
 	}
@@ -84,18 +101,17 @@ func UpdateAccount(data Account, DB *gorm.DB) (Account, error) {
 func DeleteAccount(data Account, DB *gorm.DB) error {
 
 	var acc Account
-	Get := DB.Where("code = ? and deleted_at is null", data.Code).First(&acc)
+	Get := DB.Debug().Where("code = ? and deleted_at is null", data.Code).First(&acc)
 	if Get.RecordNotFound() {
 		return errors.New("data not found")
-
 	}
 
 	date, _ := time.Parse("2006-01-02 15:04:05", time.Now().Local().Format("2006-01-02 15:04:05"))
 
-	acc.UpdatedAt = date
-	acc.DeletedAt = NullTime{sql.NullTime{Time: date, Valid: true}}
+	data.UpdatedAt = date
+	data.DeletedAt = NullTime{sql.NullTime{Time: date, Valid: true}}
 
-	delete := DB.Where("code = ?").Update(acc.DeletedAt)
+	delete := DB.Debug().Where("code = ?", data.Code).Model(&acc).Updates(data)
 	if delete.Error != nil {
 		return errors.New("something is wrong while deleting account data")
 	}

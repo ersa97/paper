@@ -33,14 +33,14 @@ func Mux(paper paper.PaperService) {
 	//financeaccount
 	r.HandleFunc("/account/new", middleware.Auth(paper.AddAccount)).Methods("POST")
 	r.HandleFunc("/account/{code}", middleware.Auth(paper.GetDetailAccount)).Methods("GET")
-	r.HandleFunc("/account/", middleware.Auth(paper.GetAccountList)).Methods("GET")
+	r.HandleFunc("/account", middleware.Auth(paper.GetAccountList)).Methods("GET")
 	r.HandleFunc("/account/{code}", middleware.Auth(paper.UpdateAccount)).Methods("PUT")
 	r.HandleFunc("/account/{code}", middleware.Auth(paper.DeleteAccount)).Methods("DELETE")
 
 	//transaction
 	r.HandleFunc("/transaction/new", middleware.Auth(paper.CreateTransaction)).Methods("POST")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.GetDetailTransaction)).Methods("GET")
-	r.HandleFunc("/transaction/", middleware.Auth(paper.GetListTransaction)).Methods("GET")
+	r.HandleFunc("/transaction", middleware.Auth(paper.GetListTransaction)).Methods("GET")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.UpdateAccount)).Methods("PUT")
 	r.HandleFunc("/transaction/{trxid}", middleware.Auth(paper.DeleteTransaction)).Methods("DELETE")
 
