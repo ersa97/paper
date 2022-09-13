@@ -47,7 +47,8 @@ func (m *PaperService) CreateTransaction(w http.ResponseWriter, r *http.Request)
 		Message: "add transaction success",
 		Data: map[string]interface{}{
 			"trxid":      result.TrxId,
-			"code":       result.Code,
+			"code_from":  result.CodeFrom,
+			"code_to":    result.CodeTo,
 			"user_id":    result.UserId,
 			"amount":     result.Amount,
 			"status":     helpers.GetStatus(result.Status),
@@ -80,7 +81,8 @@ func (m *PaperService) GetDetailTransaction(w http.ResponseWriter, r *http.Reque
 		Message: "get detail transaction success",
 		Data: map[string]interface{}{
 			"trxid":      result.TrxId,
-			"code":       result.Code,
+			"code_from":  result.CodeFrom,
+			"code_to":    result.CodeTo,
 			"user_id":    result.UserId,
 			"amount":     result.Amount,
 			"status":     helpers.GetStatus(result.Status),
@@ -188,7 +190,8 @@ func (m *PaperService) UpdateTransaction(w http.ResponseWriter, r *http.Request)
 		Message: "update transaction success",
 		Data: map[string]interface{}{
 			"trxid":      result.TrxId,
-			"code":       result.Code,
+			"code_from":  result.CodeFrom,
+			"code_to":    result.CodeTo,
 			"user_id":    result.UserId,
 			"amount":     result.Amount,
 			"status":     helpers.GetStatus(result.Status),

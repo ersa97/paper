@@ -11,7 +11,8 @@ import (
 
 type Transaction struct {
 	TrxId     int       `json:"trx_id" gorm:"trx_id"`
-	Code      int       `json:"code" gorm:"code"`
+	CodeFrom  int       `json:"code_from" gorm:"code_from"`
+	CodeTo    int       `json:"code_to" gorm:"code_to"`
 	UserId    int       `json:"user_id" gorm:"user_id"`
 	Amount    float64   `json:"amount" gorm:"amount"`
 	Status    int       `json:"status" gorm:"status"`
@@ -22,7 +23,8 @@ type Transaction struct {
 
 type TransactionMod struct {
 	TrxId     int       `json:"trx_id" gorm:"trx_id"`
-	Code      int       `json:"code" gorm:"code"`
+	CodeFrom  int       `json:"code_from" gorm:"code_from"`
+	CodeTo    int       `json:"code_to" gorm:"code_to"`
 	UserId    int       `json:"user_id" gorm:"user_id"`
 	Amount    float64   `json:"amount" gorm:"amount"`
 	Status    int       `json:"status" gorm:"status"`
